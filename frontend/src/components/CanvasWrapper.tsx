@@ -3,5 +3,5 @@ type Props = {
 };
 
 export const CanvasWrapper = ({ children }: Props) => {
-  return <div className="w-full h-full p-2">{children}</div>;
+  return <div className="w-full h-full">{children}</div>;
 };
