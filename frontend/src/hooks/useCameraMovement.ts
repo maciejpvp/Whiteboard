@@ -34,5 +34,5 @@ export const useCameraMovement = () => {
     };
   }, []);
 
-  return { camera };
+  return { camera, setCamera };
 };
