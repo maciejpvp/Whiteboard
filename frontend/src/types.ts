@@ -58,3 +58,8 @@ export type InteractionConfig =
   | {
       mode: "none";
     };
+
+export type Coords = {
+  x: number;
+  y: number;
+};

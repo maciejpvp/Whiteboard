@@ -24,7 +24,7 @@ export const useCanvasDraw = (
     const worldX = canvas.width / 2 - cameraX * zoom;
     const worldY = canvas.height / 2 - cameraY * zoom;
 
-    ctx.fillStyle = "white";
+    ctx.fillStyle = "#eee";
     ctx.fillRect(
       worldX - (WORLD_SIZE_X / 2) * zoom,
       worldY - (WORLD_SIZE_Y / 2) * zoom,
