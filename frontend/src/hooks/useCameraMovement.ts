@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import type { Coords } from "../types";
 
 type Props = {
-  zoom: number;
+  zoom: RefObject<number>;
 };
 
 export const useCameraMovement = ({ zoom }: Props) => {
-  const [camera, setCamera] = useState<Coords>({ x: 0, y: 0 });
+  const cameraRef = useRef<Coords>({ x: 0, y: 0 });
   const isSpacePressedRef = useRef<boolean>(false);
-
   const startedCoords = useRef<Coords | null>(null);
 
   useEffect(() => {
@@ -23,9 +22,12 @@ export const useCameraMovement = ({ zoom }: Props) => {
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!startedCoords.current) return;
-      const dx = (e.clientX - startedCoords.current.x) / zoom;
-      const dy = (e.clientY - startedCoords.current.y) / zoom;
-      setCamera((prev) => ({ x: prev.x - dx, y: prev.y - dy }));
+      const dx = (e.clientX - startedCoords.current.x) / zoom.current;
+      const dy = (e.clientY - startedCoords.current.y) / zoom.current;
+      cameraRef.current = {
+        x: cameraRef.current.x - dx,
+        y: cameraRef.current.y - dy,
+      };
       startedCoords.current = { x: e.clientX, y: e.clientY };
     };
 
@@ -41,11 +43,19 @@ export const useCameraMovement = ({ zoom }: Props) => {
   }, [zoom]);
 
   useEffect(() => {
+    const targetElement = document.body;
+
     const handleSpacePressed = (e: KeyboardEvent) => {
-      if (e.code === "Space") isSpacePressedRef.current = true;
+      if (e.code === "Space") {
+        isSpacePressedRef.current = true;
+        targetElement.classList.add("cursor-grab");
+      }
     };
     const handleSpaceReleased = (e: KeyboardEvent) => {
-      if (e.code === "Space") isSpacePressedRef.current = false;
+      if (e.code === "Space") {
+        isSpacePressedRef.current = false;
+        targetElement.classList.remove("cursor-grab");
+      }
     };
 
     window.addEventListener("keydown", handleSpacePressed);
@@ -57,5 +67,5 @@ export const useCameraMovement = ({ zoom }: Props) => {
     };
   }, []);
 
-  return { camera, setCamera };
+  return cameraRef;
 };

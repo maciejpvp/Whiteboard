@@ -1,59 +1,69 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { drawWhiteboard } from "../utils/drawWhiteboard";
 
 const COLORS = {
-  background: "#000000",
-  whiteboard: "#eeeeee",
+  background: "#111",
+  whiteboard: "#eee",
   dot: "#ff5555",
 };
 
+type CoordsRef = { current: { x: number; y: number } };
+type ZoomRef = { current: number };
+
 export const useCanvasDraw = (
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
-  cameraX: number,
-  cameraY: number,
-  zoom: number,
+  cameraRef: CoordsRef | null,
+  zoomRef: ZoomRef | null,
   WORLD_SIZE_X = 1000,
   WORLD_SIZE_Y = 1000,
 ) => {
-  const drawDot = (ctx: CanvasRenderingContext2D) => {
-    ctx.beginPath();
-    ctx.arc(0, 0, 10, 0, Math.PI * 2);
-    ctx.fill();
-  };
+  const animationFrameRef = useRef<number | null>(null);
 
   const draw = useCallback(() => {
-    console.log("Draw");
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const canvas = canvasRef?.current;
+    const camera = cameraRef?.current;
+    const zoom = zoomRef?.current;
+
+    if (!canvas || !camera || zoom === undefined) {
+      animationFrameRef.current = requestAnimationFrame(draw);
+      return;
+    }
+
     const ctx = canvas.getContext("2d");
+
     if (!ctx) return;
 
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
-    ctx.fillStyle = COLORS.background;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const cameraX = camera.x;
+    const cameraY = camera.y;
 
     const worldX = canvas.width / 2 - cameraX * zoom;
     const worldY = canvas.height / 2 - cameraY * zoom;
 
-    ctx.fillStyle = COLORS.whiteboard;
-    ctx.fillRect(
-      worldX - (WORLD_SIZE_X / 2) * zoom,
-      worldY - (WORLD_SIZE_Y / 2) * zoom,
-      WORLD_SIZE_X * zoom,
-      WORLD_SIZE_Y * zoom,
-    );
+    // Background
+    ctx.fillStyle = COLORS.background;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = COLORS.dot;
-    drawDot(ctx);
-  }, [canvasRef, cameraX, cameraY, zoom, WORLD_SIZE_X, WORLD_SIZE_Y]);
+    // Whiteboard
+    ctx.fillStyle = COLORS.whiteboard;
+    drawWhiteboard({ ctx, worldX, worldY, WORLD_SIZE_X, WORLD_SIZE_Y, zoom });
+
+    // Request next frame
+    animationFrameRef.current = requestAnimationFrame(draw);
+  }, [WORLD_SIZE_X, WORLD_SIZE_Y, cameraRef, zoomRef, canvasRef]);
 
   useEffect(() => {
     draw();
-  }, [cameraX, cameraY, zoom, draw]);
 
-  useEffect(() => {
-    window.addEventListener("resize", draw);
-    return () => window.removeEventListener("resize", draw);
+    const handleResize = () => draw();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      if (animationFrameRef.current)
+        cancelAnimationFrame(animationFrameRef.current);
+    };
   }, [draw]);
 };

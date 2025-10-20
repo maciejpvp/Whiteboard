@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export const useCameraZoom = () => {
-  const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(1);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      setZoom((prev) => {
-        const newZoom = prev * (e.deltaY > 0 ? 0.9 : 1.1);
-        return Math.min(Math.max(newZoom, 0.2), 5);
-      });
+      const newZoom = zoomRef.current * (e.deltaY > 0 ? 0.9 : 1.1);
+      zoomRef.current = Math.min(Math.max(newZoom, 0.2), 5);
     };
 
     document.addEventListener("wheel", handleWheel);
@@ -18,5 +16,5 @@ export const useCameraZoom = () => {
     };
   }, []);
 
-  return { zoom, setZoom };
+  return zoomRef;
 };
