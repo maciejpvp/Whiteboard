@@ -5,8 +5,8 @@ import { useCameraZoom } from "../hooks/useCameraZoom";
 
 export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const { camera } = useCameraMovement();
   const { zoom } = useCameraZoom();
+  const { camera } = useCameraMovement({ zoom });
 
   useCanvasDraw(canvasRef, camera.x, camera.y, zoom);
 
