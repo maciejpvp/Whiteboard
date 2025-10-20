@@ -14,10 +14,11 @@ export const useCanvasDraw = (
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   cameraRef: CoordsRef | null,
   zoomRef: ZoomRef | null,
-  WORLD_SIZE_X = 1000,
-  WORLD_SIZE_Y = 1000,
+  WORLD_SIZE_X: number,
+  WORLD_SIZE_Y: number,
 ) => {
   const animationFrameRef = useRef<number | null>(null);
+  const whiteboardRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
 
   const draw = useCallback(() => {
     const canvas = canvasRef?.current;
@@ -47,8 +48,26 @@ export const useCanvasDraw = (
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Whiteboard
+    const whiteboardX = worldX - (WORLD_SIZE_X / 2) * zoom;
+    const whiteboardY = worldY - (WORLD_SIZE_Y / 2) * zoom;
+    const whiteboardWidth = WORLD_SIZE_X * zoom;
+    const whiteboardHeight = WORLD_SIZE_Y * zoom;
+
+    whiteboardRef.current = {
+      x: whiteboardX,
+      y: whiteboardY,
+      width: whiteboardWidth,
+      height: whiteboardHeight,
+    };
+
     ctx.fillStyle = COLORS.whiteboard;
-    drawWhiteboard({ ctx, worldX, worldY, WORLD_SIZE_X, WORLD_SIZE_Y, zoom });
+    drawWhiteboard({
+      ctx,
+      x: whiteboardX,
+      y: whiteboardY,
+      width: whiteboardWidth,
+      height: whiteboardHeight,
+    });
 
     // Request next frame
     animationFrameRef.current = requestAnimationFrame(draw);
@@ -66,4 +85,6 @@ export const useCanvasDraw = (
         cancelAnimationFrame(animationFrameRef.current);
     };
   }, [draw]);
+
+  return whiteboardRef;
 };
