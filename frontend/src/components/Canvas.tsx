@@ -20,13 +20,11 @@ export const Canvas = () => {
     WORLD_SIZE_Y,
   );
 
-  const onClick = useWhiteboardInteractions({ whiteboardRef });
+  const onClick = useWhiteboardInteractions({
+    whiteboardRef,
+    WORLD_SIZE_X,
+    WORLD_SIZE_Y,
+  });
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full"
-      onClick={(e) => onClick(e)}
-    />
-  );
+  return <canvas ref={canvasRef} className="w-full h-full" onClick={onClick} />;
 };
