@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
-import { drawWhiteboard } from "../utils/drawWhiteboard";
+import { drawWhiteboard } from "../utils/draw/drawWhiteboard";
+import type { WhiteboardData } from "../types";
+import { drawData } from "../utils/draw/drawData";
 
 const COLORS = {
   background: "#111",
@@ -16,6 +18,7 @@ export const useCanvasDraw = (
   zoomRef: ZoomRef | null,
   WORLD_SIZE_X: number,
   WORLD_SIZE_Y: number,
+  dataRef: React.RefObject<WhiteboardData>,
 ) => {
   const animationFrameRef = useRef<number | null>(null);
   const whiteboardRef = useRef({ x: 0, y: 0, width: 0, height: 0 });
@@ -69,9 +72,11 @@ export const useCanvasDraw = (
       height: whiteboardHeight,
     });
 
+    drawData(ctx, dataRef.current, whiteboardRef);
+
     // Request next frame
     animationFrameRef.current = requestAnimationFrame(draw);
-  }, [WORLD_SIZE_X, WORLD_SIZE_Y, cameraRef, zoomRef, canvasRef]);
+  }, [WORLD_SIZE_X, WORLD_SIZE_Y, cameraRef, zoomRef, canvasRef, dataRef]);
 
   useEffect(() => {
     draw();

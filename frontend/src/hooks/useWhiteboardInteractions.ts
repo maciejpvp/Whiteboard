@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { getWhiteboardCoords } from "../utils/getWhiteboardCoords";
+import { getWhiteboardCoords } from "../utils/draw/getWhiteboardCoords";
 import { isCursorInsideWhiteboard } from "../utils/isCursorInsideWhiteboard";
 import type { LineElement, Point } from "../types";
 
@@ -13,6 +13,7 @@ type Props = {
   WORLD_SIZE_X: number;
   WORLD_SIZE_Y: number;
   isSpacePressedRef: React.RefObject<boolean>;
+  dataRef: React.RefObject<LineElement[]>;
 };
 
 export const useWhiteboardInteractions = ({
@@ -20,6 +21,7 @@ export const useWhiteboardInteractions = ({
   WORLD_SIZE_X,
   WORLD_SIZE_Y,
   isSpacePressedRef,
+  dataRef,
 }: Props) => {
   const isClickedRef = useRef<boolean>(false);
   const newEntryRef = useRef<LineElement | null>(null);
@@ -29,8 +31,7 @@ export const useWhiteboardInteractions = ({
 
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (isSpacePressedRef.current) return;
-    const insideWhiteboard = isCursorInsideWhiteboard(e, whiteboardRef);
-    if (!insideWhiteboard) return;
+    if (!isCursorInsideWhiteboard(e, whiteboardRef)) return;
 
     isClickedRef.current = true;
 
@@ -40,19 +41,20 @@ export const useWhiteboardInteractions = ({
       WORLD_SIZE_X,
       WORLD_SIZE_Y,
     );
-    newEntryRef.current = {
+    const newLine: LineElement = {
       type: "line",
       points: [{ x, y }],
       color: "#000",
       size: 2,
     };
+
+    newEntryRef.current = newLine;
+    dataRef.current = [...dataRef.current, newLine];
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
     if (!isClickedRef.current || !newEntryRef.current) return;
-
-    const insideWhiteboard = isCursorInsideWhiteboard(e, whiteboardRef);
-    if (!insideWhiteboard) return;
+    if (!isCursorInsideWhiteboard(e, whiteboardRef)) return;
 
     const { x, y } = getWhiteboardCoords(
       e,
@@ -69,11 +71,8 @@ export const useWhiteboardInteractions = ({
   };
 
   const onPointerUp = () => {
-    if (newEntryRef.current) {
-      console.log(newEntryRef.current);
-      newEntryRef.current = null;
-    }
     isClickedRef.current = false;
+    newEntryRef.current = null;
   };
 
   return { onPointerMove, onPointerDown, onPointerUp };

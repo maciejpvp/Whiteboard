@@ -3,6 +3,7 @@ import { useCanvasDraw } from "../hooks/useCanvasDraw";
 import { useCameraMovement } from "../hooks/useCameraMovement";
 import { useCameraZoom } from "../hooks/useCameraZoom";
 import { useWhiteboardInteractions } from "../hooks/useWhiteboardInteractions";
+import type { WhiteboardData } from "../types";
 
 const WORLD_SIZE_X = 1000;
 const WORLD_SIZE_Y = 1000;
@@ -11,6 +12,7 @@ export const Canvas = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const zoomRef = useCameraZoom();
   const isSpacePressedRef = useRef<boolean>(false);
+  const dataRef = useRef<WhiteboardData>([]);
   const { cameraRef, handleMouseDown, handleMouseMove, handleMouseUp } =
     useCameraMovement({ zoom: zoomRef, isSpacePressedRef });
 
@@ -20,6 +22,7 @@ export const Canvas = () => {
     zoomRef,
     WORLD_SIZE_X,
     WORLD_SIZE_Y,
+    dataRef,
   );
 
   const { onPointerMove, onPointerDown, onPointerUp } =
@@ -28,6 +31,7 @@ export const Canvas = () => {
       WORLD_SIZE_X,
       WORLD_SIZE_Y,
       isSpacePressedRef,
+      dataRef,
     });
 
   useEffect(() => {

@@ -30,8 +30,8 @@ export type TextElement = {
   fontFamily?: string;
 };
 
-export type WhiteboardElement = LineElement | ShapeElement | TextElement;
-export type WhiteboardData = WhiteboardElement[];
+export type WhiteboardElement = LineElement; // | ShapeElement | TextElement;
+export type WhiteboardData = LineElement[];
 
 export type InteractionMode = "draw-line" | "draw-shape" | "text" | "none";
 
