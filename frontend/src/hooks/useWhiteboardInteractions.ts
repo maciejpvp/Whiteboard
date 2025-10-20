@@ -12,12 +12,14 @@ type Props = {
   }>;
   WORLD_SIZE_X: number;
   WORLD_SIZE_Y: number;
+  isSpacePressedRef: React.RefObject<boolean>;
 };
 
 export const useWhiteboardInteractions = ({
   whiteboardRef,
   WORLD_SIZE_X,
   WORLD_SIZE_Y,
+  isSpacePressedRef,
 }: Props) => {
   const isClickedRef = useRef<boolean>(false);
   const newEntryRef = useRef<LineElement | null>(null);
@@ -26,6 +28,7 @@ export const useWhiteboardInteractions = ({
     Math.hypot(p2.x - p1.x, p2.y - p1.y);
 
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    if (isSpacePressedRef.current) return;
     const insideWhiteboard = isCursorInsideWhiteboard(e, whiteboardRef);
     if (!insideWhiteboard) return;
 
