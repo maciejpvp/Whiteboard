@@ -1,4 +1,4 @@
-import { useRef, type RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import type { Coords } from "../types";
 
 type Props = {
@@ -29,6 +29,23 @@ export const useCameraMovement = ({ zoom, isSpacePressedRef }: Props) => {
     };
     startedCoords.current = { x: e.clientX, y: e.clientY };
   };
+
+  useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      // 1 is middle click
+      if (event.button === 1) {
+        startedCoords.current = { x: event.clientX, y: event.clientY };
+      }
+    };
+
+    document.addEventListener("mousedown", handleMouseDown);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousedown", handleMouseDown);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isSpacePressedRef]);
 
   return { cameraRef, handleMouseDown, handleMouseMove, handleMouseUp };
 };

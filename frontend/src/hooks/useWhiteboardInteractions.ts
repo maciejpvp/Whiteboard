@@ -31,6 +31,9 @@ export const useWhiteboardInteractions = ({
     Math.hypot(p2.x - p1.x, p2.y - p1.y);
 
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    // Only draw with left click
+    if (e.button !== 0) return;
+    console.log("draw");
     if (isSpacePressedRef.current) return;
     if (!isCursorInsideWhiteboard(e, whiteboardRef)) return;
 
