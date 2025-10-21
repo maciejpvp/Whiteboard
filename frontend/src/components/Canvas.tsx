@@ -13,6 +13,7 @@ export const Canvas = () => {
   const zoomRef = useCameraZoom();
   const isSpacePressedRef = useRef<boolean>(false);
   const dataRef = useRef<WhiteboardData>([]);
+
   const { cameraRef, handleMouseDown, handleMouseMove, handleMouseUp } =
     useCameraMovement({ zoom: zoomRef, isSpacePressedRef });
 

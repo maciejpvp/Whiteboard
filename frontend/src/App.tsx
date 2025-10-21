@@ -1,5 +1,6 @@
 import { Canvas } from "./components/Canvas";
 import { CanvasWrapper } from "./components/CanvasWrapper";
+import { Menu } from "./components/Menu";
 
 export const App = () => {
   return (
@@ -7,6 +8,7 @@ export const App = () => {
       <CanvasWrapper>
         <Canvas />
       </CanvasWrapper>
+      <Menu />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { getWhiteboardCoords } from "../utils/draw/getWhiteboardCoords";
 import { isCursorInsideWhiteboard } from "../utils/isCursorInsideWhiteboard";
 import type { LineElement, Point } from "../types";
+import { useWhiteboardStore } from "../store/whiteboardStore";
 
 type Props = {
   whiteboardRef: React.RefObject<{
@@ -44,8 +45,8 @@ export const useWhiteboardInteractions = ({
     const newLine: LineElement = {
       type: "line",
       points: [{ x, y }],
-      color: "#000",
-      size: 2,
+      color: useWhiteboardStore.getState().color,
+      size: useWhiteboardStore.getState().brushSize,
     };
 
     newEntryRef.current = newLine;
@@ -65,7 +66,7 @@ export const useWhiteboardInteractions = ({
     const points = newEntryRef.current.points;
     const lastPoint = points[points.length - 1];
 
-    if (distance(lastPoint, { x, y }) > 10) {
+    if (distance(lastPoint, { x, y }) > 1) {
       points.push({ x, y });
     }
   };
