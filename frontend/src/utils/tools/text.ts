@@ -74,7 +74,9 @@ export const textTool = {
     });
 
     const finish = () => {
-      if (input.parentNode) input.remove();
+      setTimeout(() => {
+        if (input.parentNode) input.parentNode.removeChild(input);
+      }, 0);
       document.body.classList.remove("cursor-text");
     };
 
