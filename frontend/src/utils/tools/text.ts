@@ -24,8 +24,11 @@ export const textTool = {
     WORLD_SIZE_Y,
     dataRef,
   }: TextProps) => {
-    if (e.button !== 0) return; // left click only
+    if (e.button !== 0) return;
     if (!isCursorInsideWhiteboard(e, whiteboardRef)) return;
+
+    // Check if user write something already
+    if (document.getElementById("text-input")) return;
 
     const { x, y } = getWhiteboardCoords(
       e,
@@ -34,17 +37,53 @@ export const textTool = {
       WORLD_SIZE_Y,
     );
     const color = useWhiteboardStore.getState().color;
+    const fontSize = useWhiteboardStore.getState().textSize;
 
-    const newText: TextElement = {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.id = "text-input";
+    Object.assign(input.style, {
+      position: "absolute",
+      left: "-9999px",
+      top: "-9999px",
+      color: "transparent",
+      background: "red",
+      opacity: "0",
+      width: "0px",
+      height: "0px",
+      border: "none",
+      outline: "none",
+      pointerEvents: "none",
+    });
+    document.body.appendChild(input);
+    setTimeout(() => input.focus(), 0);
+    document.body.classList.add("cursor-text");
+
+    const currentText: TextElement = {
       type: "text",
       x,
       y,
-      text: "TEST",
+      text: "",
       color,
-      fontSize: useWhiteboardStore.getState().textSize,
+      fontSize,
+    };
+    dataRef.current = [...dataRef.current, currentText];
+
+    input.addEventListener("input", () => {
+      currentText.text = input.value;
+    });
+
+    const finish = () => {
+      if (input.parentNode) input.remove();
+      document.body.classList.remove("cursor-text");
     };
 
-    dataRef.current = [...dataRef.current, newText];
+    input.addEventListener("blur", finish);
+
+    input.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") finish();
+      else if (ev.key === "Escape") finish();
+    });
   },
 
   drawData: (

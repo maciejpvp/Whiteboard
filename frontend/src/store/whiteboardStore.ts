@@ -14,9 +14,9 @@ type WhiteboardState = {
 
 export const useWhiteboardStore = create<WhiteboardState>((set) => ({
   color: "#f00",
-  brushSize: 5,
+  brushSize: 15,
   textSize: 25,
-  tool: "text",
+  tool: "draw-line",
   setColor: (val) => set({ color: val }),
   setBrushSize: (val) => set({ brushSize: val }),
   setTextSize: (val) => set({ textSize: val }),
