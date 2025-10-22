@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import { getWhiteboardCoords } from "../utils/draw/getWhiteboardCoords";
-import { isCursorInsideWhiteboard } from "../utils/isCursorInsideWhiteboard";
-import type { LineElement, Point } from "../types";
 import { useWhiteboardStore } from "../store/whiteboardStore";
+import type { LineElement, WhiteboardData } from "../types";
+import { brush } from "../utils/tools/brush";
+import { textTool } from "../utils/tools/text";
 
 type Props = {
   whiteboardRef: React.RefObject<{
@@ -14,7 +14,7 @@ type Props = {
   WORLD_SIZE_X: number;
   WORLD_SIZE_Y: number;
   isSpacePressedRef: React.RefObject<boolean>;
-  dataRef: React.RefObject<LineElement[]>;
+  dataRef: React.RefObject<WhiteboardData>;
 };
 
 export const useWhiteboardInteractions = ({
@@ -26,58 +26,53 @@ export const useWhiteboardInteractions = ({
 }: Props) => {
   const isClickedRef = useRef<boolean>(false);
   const newEntryRef = useRef<LineElement | null>(null);
-
-  const distance = (p1: Point, p2: Point) =>
-    Math.hypot(p2.x - p1.x, p2.y - p1.y);
+  const tool = useWhiteboardStore((store) => store.tool);
 
   const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    // Only draw with left click
-    if (e.button !== 0) return;
-    console.log("draw");
     if (isSpacePressedRef.current) return;
-    if (!isCursorInsideWhiteboard(e, whiteboardRef)) return;
 
-    isClickedRef.current = true;
+    if (tool === "draw-line") {
+      brush.onPointerDown({
+        e,
+        whiteboardRef,
+        WORLD_SIZE_X,
+        WORLD_SIZE_Y,
+        dataRef,
+        newEntryRef,
+        isClickedRef,
+      });
+    }
 
-    const { x, y } = getWhiteboardCoords(
-      e,
-      whiteboardRef,
-      WORLD_SIZE_X,
-      WORLD_SIZE_Y,
-    );
-    const newLine: LineElement = {
-      type: "line",
-      points: [{ x, y }],
-      color: useWhiteboardStore.getState().color,
-      size: useWhiteboardStore.getState().brushSize,
-    };
-
-    newEntryRef.current = newLine;
-    dataRef.current = [...dataRef.current, newLine];
+    if (tool === "text") {
+      textTool.onPointerDown({
+        e,
+        whiteboardRef,
+        WORLD_SIZE_X,
+        WORLD_SIZE_Y,
+        dataRef,
+      });
+    }
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!isClickedRef.current || !newEntryRef.current) return;
-    if (!isCursorInsideWhiteboard(e, whiteboardRef)) return;
-
-    const { x, y } = getWhiteboardCoords(
-      e,
-      whiteboardRef,
-      WORLD_SIZE_X,
-      WORLD_SIZE_Y,
-    );
-    const points = newEntryRef.current.points;
-    const lastPoint = points[points.length - 1];
-
-    if (distance(lastPoint, { x, y }) > 1) {
-      points.push({ x, y });
+    if (tool === "draw-line") {
+      brush.onPointerMove({
+        e,
+        whiteboardRef,
+        WORLD_SIZE_X,
+        WORLD_SIZE_Y,
+        dataRef,
+        newEntryRef,
+        isClickedRef,
+      });
     }
   };
 
   const onPointerUp = () => {
-    isClickedRef.current = false;
-    newEntryRef.current = null;
+    if (tool === "draw-line") {
+      brush.onPointerUp(isClickedRef, newEntryRef);
+    }
   };
 
-  return { onPointerMove, onPointerDown, onPointerUp };
+  return { onPointerDown, onPointerMove, onPointerUp };
 };

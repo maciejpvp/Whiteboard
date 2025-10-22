@@ -27,7 +27,7 @@ export const ColorPicker = () => {
             <div
               className="fixed bottom-20 left-1/2 -translate-x-1/2
                          bg-white p-3 rounded-2xl shadow-xl border border-gray-200
-                         z-50"
+                         z-50 bg-white/80"
             >
               <HexColorPicker color={color} onChange={setColor} />
             </div>

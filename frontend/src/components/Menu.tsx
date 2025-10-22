@@ -1,5 +1,6 @@
 import { ColorPicker } from "./Menu/ColorPicker";
 import { BrushSizePicker } from "./Menu/BrushSizePicker";
+import { TextPicker } from "./Menu/TextPicker";
 
 export const Menu = () => {
   return (
@@ -14,6 +15,7 @@ export const Menu = () => {
                  transition-all duration-500 hover:scale-105 hover:from-white/30 hover:to-white/10"
     >
       <BrushSizePicker />
+      <TextPicker />
       <ColorPicker />
     </div>
   );

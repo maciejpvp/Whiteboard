@@ -72,7 +72,7 @@ export const useCanvasDraw = (
       height: whiteboardHeight,
     });
 
-    drawData(ctx, dataRef.current, whiteboardRef, zoom);
+    drawData({ ctx, data: dataRef.current, whiteboardRef, zoom });
 
     // Request next frame
     animationFrameRef.current = requestAnimationFrame(draw);
