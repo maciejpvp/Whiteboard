@@ -32,6 +32,17 @@ export const createLambdas = (stack: Stack, props: Props) => {
         },
       ],
     },
+    {
+      name: "getWhiteboardItem",
+      stage,
+      resources: [
+        {
+          grant: (fn) => whiteboardTable.grantReadData(fn),
+          envName: "whiteboardTable",
+          envValue: whiteboardTable.tableName,
+        },
+      ],
+    },
   ];
 
   const lambdas = Object.fromEntries(

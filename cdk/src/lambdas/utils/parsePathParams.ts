@@ -8,9 +8,11 @@ interface ParsePathParamsOptions<T> {
 export function parsePathParams<T = any>({
   event,
   schema,
-}: ParsePathParamsOptions<T>): { value: T | null; error?: string } {
+}: ParsePathParamsOptions<T>):
+  | { ok: true; value: T }
+  | { ok: false; error: string } {
   if (!event || !event.pathParameters) {
-    return { value: null, error: "Missing path parameters" };
+    return { ok: false, error: "Missing path parameters" };
   }
 
   const params = event.pathParameters;
@@ -23,13 +25,13 @@ export function parsePathParams<T = any>({
 
     if (error) {
       return {
-        value: null,
+        ok: false,
         error: error.details.map((d) => d.message).join(", "),
       };
     }
 
-    return { value };
+    return { ok: true, value };
   }
 
-  return { value: params };
+  return { ok: true, value: params };
 }

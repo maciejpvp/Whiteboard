@@ -12,7 +12,7 @@ export const handler: Handler = async (
 ): Promise<APIGatewayProxyResult> => {
   const { userId } = getCognitoUser(event);
 
-  const items = getWhiteboardsList({ userId });
+  const items = await getWhiteboardsList({ userId });
 
   return sendResponse(200, {
     message: "Successfully got whiteboards list.",
