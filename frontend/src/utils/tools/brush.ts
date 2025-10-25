@@ -2,6 +2,7 @@ import { useWhiteboardStore } from "../../store/whiteboardStore";
 import type { LineElement, Point, WhiteboardData } from "../../types";
 import { getWhiteboardCoords } from "../draw/getWhiteboardCoords";
 import { isCursorInsideWhiteboard } from "../isCursorInsideWhiteboard";
+import { v4 as uuidv4 } from "uuid";
 
 type DrawLineProps = {
   e: React.PointerEvent<HTMLCanvasElement>;
@@ -43,6 +44,7 @@ export const brush = {
     );
 
     const newLine: LineElement = {
+      id: uuidv4(),
       type: "line",
       points: [{ x, y }],
       color: useWhiteboardStore.getState().color,

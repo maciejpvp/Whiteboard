@@ -2,6 +2,7 @@ import { useWhiteboardStore } from "../../store/whiteboardStore";
 import type { TextElement, WhiteboardData } from "../../types";
 import { getWhiteboardCoords } from "../draw/getWhiteboardCoords";
 import { isCursorInsideWhiteboard } from "../isCursorInsideWhiteboard";
+import { v4 as uuidv4 } from "uuid";
 
 type TextProps = {
   e: React.PointerEvent<HTMLCanvasElement>;
@@ -60,6 +61,7 @@ export const textTool = {
     document.body.classList.add("cursor-text");
 
     const currentText: TextElement = {
+      id: uuidv4(),
       type: "text",
       x,
       y,

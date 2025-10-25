@@ -56,7 +56,7 @@ export const BrushSizePicker = () => {
                          z-50 flex flex-col items-center gap-4 transition-all duration-200 pb-10"
             >
               <p className="text-sm font-semibold text-gray-700 select-none">
-                Brush Size{" "}
+                Brush Size
                 <span className="font-bold italic underline">{size}</span>
               </p>
 

@@ -1,26 +1,15 @@
 export type Point = { x: number; y: number };
 
 export type LineElement = {
+  id: string;
   type: "line";
   points: Point[];
   color: string;
   size: number;
 };
 
-export type ShapeElement = {
-  type: "shape";
-  shape: "circle" | "rectangle" | "triangle";
-  x: number;
-  y: number;
-  width?: number;
-  height?: number;
-  radius?: number;
-  color: string;
-  fill?: boolean;
-  size?: number;
-};
-
 export type TextElement = {
+  id: string;
   type: "text";
   x: number;
   y: number;
@@ -30,7 +19,7 @@ export type TextElement = {
   fontFamily?: string;
 };
 
-export type WhiteboardElement = LineElement | ShapeElement | TextElement;
+export type WhiteboardElement = LineElement | TextElement;
 export type WhiteboardData = WhiteboardElement[];
 
 export type InteractionMode = "draw-line" | "draw-shape" | "text" | "none";
