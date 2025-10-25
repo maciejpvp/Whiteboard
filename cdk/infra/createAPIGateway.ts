@@ -25,7 +25,7 @@ export const createAPIGateway = (
   { userPool, stage, routes }: Props,
 ) => {
   const api = new apigateway.RestApi(stack, `Api-${stage}`, {
-    restApiName: `DataGuardAPI-${stage}-${stack.stackName}`,
+    restApiName: `WhiteboardAPI-${stage}-${stack.stackName}`,
     deploy: false,
     defaultCorsPreflightOptions: {
       allowOrigins: apigateway.Cors.ALL_ORIGINS,

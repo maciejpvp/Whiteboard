@@ -6,6 +6,8 @@
   },
   "scripts": {
     "build": "tsc",
+    "deploy:test": "cdk deploy WhiteboardTestStack",
+    "deploy:prod": "cdk deploy WhiteboardProdStack",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"

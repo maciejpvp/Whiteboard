@@ -30,7 +30,7 @@ export class CreateLambda extends Construct {
 
     this.lambdaFunction = new NodejsFunction(this, `${name}-${stage}`, {
       runtime: lambda.Runtime.NODEJS_20_X,
-      entry: path.join(__dirname, `../src/lambdas/handlers/${name}/${name}.ts`),
+      entry: path.join(__dirname, `../src/lambdas/${name}/${name}.ts`),
       handler: "handler",
       environment: {
         STAGE: stage,

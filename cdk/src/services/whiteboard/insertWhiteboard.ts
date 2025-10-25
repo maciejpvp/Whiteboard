@@ -15,9 +15,10 @@ export const insertWhiteboard = async ({ body, userId }: Props) => {
   const item = {
     UserId: userId,
     WhiteboardId: uuidv4(),
-    name: body.name,
+    Title: body.name,
     data: [],
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 
   const command = new PutCommand({

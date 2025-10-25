@@ -5,14 +5,13 @@ import { WhiteboardStack } from "../lib/cdk-stack";
 const app = new cdk.App();
 
 // Stack test
-new WhiteboardStack(app, "DataGuardTestStack", {
+new WhiteboardStack(app, "WhiteboardTestStack", {
   stage: "test",
 });
 
 // Stack prod
-new WhiteboardStack(app, "DataGuardProdStack", {
+new WhiteboardStack(app, "WhiteboardProdStack", {
   stage: "prod",
 });
 
 app.synth();
-

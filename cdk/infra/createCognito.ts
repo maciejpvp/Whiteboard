@@ -4,7 +4,7 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { GOOGLE_CLIENT_ID } from "../env";
 
 export const createCognito = (stack: Stack, stage: string) => {
-  const userPool = new cognito.UserPool(stack, `DataGuardUserPool-${stage}`, {
+  const userPool = new cognito.UserPool(stack, `WhiteboardUserPool-${stage}`, {
     selfSignUpEnabled: true,
     signInAliases: { email: true },
   });
