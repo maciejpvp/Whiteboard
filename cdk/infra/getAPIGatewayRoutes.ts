@@ -30,6 +30,13 @@ export const getAPIGatewayRoutes = ({ lambdas }: Props) => {
       lambda: lambdas.getWhiteboardItem.lambdaFunction,
       secured: true,
     },
+    {
+      name: "updateWhiteboardData",
+      type: "PUT",
+      route: "whiteboard/draw/{id}",
+      lambda: lambdas.updateWhiteboardData.lambdaFunction,
+      secured: true,
+    },
   ];
 
   return routes;
