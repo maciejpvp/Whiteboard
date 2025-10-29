@@ -1,14 +1,15 @@
-import { Canvas } from "./components/Canvas";
-import { CanvasWrapper } from "./components/CanvasWrapper";
-import { Menu } from "./components/Menu";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { Whiteboard } from "./pages/Whiteboard";
+import { ProjectsList } from "./pages/ProjectsList";
 
 export const App = () => {
   return (
-    <div className="w-dvw h-dvh bg-zinc-100 flex justify-center items-center">
-      <CanvasWrapper>
-        <Canvas />
-      </CanvasWrapper>
-      <Menu />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/project/:id" element={<Whiteboard />} />
+        <Route path="/" element={<ProjectsList />} />
+        <Route path="*" element={<Navigate to={"/"} />} />
+      </Routes>
+    </BrowserRouter>
   );
 };

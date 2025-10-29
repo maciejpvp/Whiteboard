@@ -1,7 +1,7 @@
 import { Pencil } from "lucide-react";
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useWhiteboardStore } from "../../store/whiteboardStore";
+import { useWhiteboardStore } from "../../../store/whiteboardStore";
 
 export const BrushSizePicker = () => {
   const size = useWhiteboardStore((store) => store.brushSize);

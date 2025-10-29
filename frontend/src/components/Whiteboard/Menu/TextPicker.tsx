@@ -1,7 +1,7 @@
 import { TextCursor } from "lucide-react";
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useWhiteboardStore } from "../../store/whiteboardStore";
+import { useWhiteboardStore } from "../../../store/whiteboardStore";
 
 export const TextPicker = () => {
   const size = useWhiteboardStore((store) => store.textSize);

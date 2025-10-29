@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { HexColorPicker } from "react-colorful";
-import { useWhiteboardStore } from "../../store/whiteboardStore";
+import { useWhiteboardStore } from "../../../store/whiteboardStore";
 
 export const ColorPicker = () => {
   const [showPicker, setShowPicker] = useState(false);
