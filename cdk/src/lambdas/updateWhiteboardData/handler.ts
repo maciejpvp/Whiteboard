@@ -10,25 +10,32 @@ import { updateWhiteboardData } from "../../services/whiteboard/updateWhiteboard
 export const handler: Handler = async (
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
-  // Validates event data and extract necessary data for next step.
-  const response = validateData(event);
+  try {
+    // Validates event data and extract necessary data for next step.
+    const response = validateData(event);
 
-  if (!response.ok) {
-    return sendResponse(400, {
-      message: response.message,
-    });
-  }
+    if (!response.ok) {
+      return sendResponse(400, {
+        message: response.message,
+      });
+    }
 
-  // Push newObject into data attribute
-  const { success } = await updateWhiteboardData(response);
+    // Push newObject into data attribute
+    const { success } = await updateWhiteboardData(response);
 
-  if (success) {
-    return sendResponse(200, {
-      message: "Successfully updated data",
-    });
-  } else {
+    if (success) {
+      return sendResponse(200, {
+        message: "Successfully updated data",
+      });
+    } else {
+      return sendResponse(500, {
+        message: "Something went wrong",
+      });
+    }
+  } catch (err) {
+    console.log("ERROR: ", err);
     return sendResponse(500, {
-      message: "Something went wrong",
+      message: "Something went wrong.",
     });
   }
 };

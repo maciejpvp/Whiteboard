@@ -3,6 +3,8 @@ import { useWhiteboardStore } from "../store/whiteboardStore";
 import type { LineElement, WhiteboardData } from "../types";
 import { brush } from "../utils/tools/brush";
 import { textTool } from "../utils/tools/text";
+import { whiteboardApi } from "@/api/whiteboard";
+import { getProjectId } from "@/utils/getProjectId";
 
 type Props = {
   whiteboardRef: React.RefObject<{
@@ -69,7 +71,11 @@ export const useWhiteboardInteractions = ({
   };
 
   const onPointerUp = () => {
+    if (newEntryRef.current === null) return;
     if (tool === "draw-line") {
+      const id = getProjectId();
+      console.log(id, newEntryRef.current);
+      whiteboardApi.drawOnWhiteboard(id, newEntryRef.current);
       brush.onPointerUp(isClickedRef, newEntryRef);
     }
   };

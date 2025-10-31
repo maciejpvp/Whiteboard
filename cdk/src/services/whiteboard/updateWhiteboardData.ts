@@ -24,7 +24,7 @@ export const updateWhiteboardData = async ({
       "#data": "data",
     },
     ExpressionAttributeValues: {
-      ":newObject": newObject,
+      ":newObject": [newObject],
       ":empty_list": [],
     },
     ReturnValues: "NONE",

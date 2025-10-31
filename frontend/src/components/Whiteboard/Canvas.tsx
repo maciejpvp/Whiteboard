@@ -4,6 +4,7 @@ import { useCameraMovement } from "../../hooks/useCameraMovement";
 import { useCameraZoom } from "../../hooks/useCameraZoom";
 import { useWhiteboardInteractions } from "../../hooks/useWhiteboardInteractions";
 import type { WhiteboardData } from "../../types";
+import { useParams } from "react-router-dom";
 
 const WORLD_SIZE_X = 1000;
 const WORLD_SIZE_Y = 1000;
