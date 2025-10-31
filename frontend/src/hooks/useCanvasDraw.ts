@@ -4,7 +4,7 @@ import type { WhiteboardData } from "../types";
 import { drawData } from "../utils/draw/drawData";
 
 const COLORS = {
-  background: "#111",
+  background: "#F1F5F9",
   whiteboard: "#eee",
   dot: "#ff5555",
 };

@@ -4,16 +4,21 @@ import { useCameraMovement } from "../../hooks/useCameraMovement";
 import { useCameraZoom } from "../../hooks/useCameraZoom";
 import { useWhiteboardInteractions } from "../../hooks/useWhiteboardInteractions";
 import type { WhiteboardData } from "../../types";
-import { useParams } from "react-router-dom";
 
 const WORLD_SIZE_X = 1000;
 const WORLD_SIZE_Y = 1000;
 
-export const Canvas = () => {
+export const Canvas = ({
+  defaultDataValue,
+}: {
+  defaultDataValue: WhiteboardData;
+}) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const zoomRef = useCameraZoom();
   const isSpacePressedRef = useRef<boolean>(false);
-  const dataRef = useRef<WhiteboardData>([]);
+  const dataRef = useRef<WhiteboardData>(defaultDataValue);
+
+  console.log(dataRef);
 
   const { cameraRef, handleMouseDown, handleMouseMove, handleMouseUp } =
     useCameraMovement({ zoom: zoomRef, isSpacePressedRef });
