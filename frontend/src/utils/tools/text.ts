@@ -1,8 +1,10 @@
+import { whiteboardApi } from "@/api/whiteboard";
 import { useWhiteboardStore } from "../../store/whiteboardStore";
 import type { TextElement, WhiteboardData } from "../../types";
 import { getWhiteboardCoords } from "../draw/getWhiteboardCoords";
 import { isCursorInsideWhiteboard } from "../isCursorInsideWhiteboard";
 import { v4 as uuidv4 } from "uuid";
+import { getProjectId } from "../getProjectId";
 
 type TextProps = {
   e: React.PointerEvent<HTMLCanvasElement>;
@@ -76,10 +78,20 @@ export const textTool = {
     });
 
     const finish = () => {
+      // Make sure finish is called once
+      document.body.classList.remove("cursor-text");
       setTimeout(() => {
         if (input.parentNode) input.parentNode.removeChild(input);
       }, 0);
-      document.body.classList.remove("cursor-text");
+
+      if (!document.body.classList.contains("cursor-text")) {
+        return;
+      }
+      if (!currentText?.text?.trim()) return;
+
+      const id = getProjectId();
+
+      whiteboardApi.drawOnWhiteboard(id, currentText);
     };
 
     input.addEventListener("blur", finish);
