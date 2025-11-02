@@ -7,21 +7,23 @@ import { useEffect, useState } from "react";
 import { WhiteboardData } from "@/types";
 import { ProjectNavbar } from "@/components/Whiteboard/ProjectNavbar";
 import { SpinnerPage } from "./Spinner";
+import { useAuthStore } from "@/store/authStore";
 
 export const Whiteboard = () => {
   const { id } = useParams();
   const [dataValue, setDataValue] = useState<WhiteboardData | null>(null);
   const [title, setTitle] = useState<string>("");
+  const token = useAuthStore((store) => store.idToken);
 
   useEffect(() => {
+    if (!token) return;
     (async () => {
       if (id?.trim() === "") return;
 
       const response = await whiteboardApi.getItem(id ?? "");
-      console.log(response);
       const item = response.data?.data.item;
 
-      if (!item) {
+      if (!item.data) {
         setDataValue([]);
         return;
       }
@@ -31,7 +33,7 @@ export const Whiteboard = () => {
       setDataValue([...itemData]);
       setTitle(item.Title);
     })();
-  }, [id]);
+  }, [id, token]);
 
   if (dataValue === null) return <SpinnerPage />;
 

@@ -9,7 +9,7 @@ export const ProjectNavbar = ({ title }: Props) => {
   const navigate = useNavigate();
 
   return (
-    <div className="h-16 w-dvw bg-slate-50/80 py-2 px-5 flex items-center justify-between absolute top-0">
+    <div className="h-16 w-dvw bg-slate-50 py-2 px-5 flex items-center justify-between absolute top-0">
       <button
         className="h-full flex flex-row items-center justify-center gap-3 cursor-pointer"
         onClick={() => navigate("/")}

@@ -5,6 +5,7 @@ import { brush } from "../utils/tools/brush";
 import { textTool } from "../utils/tools/text";
 import { whiteboardApi } from "@/api/whiteboard";
 import { getProjectId } from "@/utils/getProjectId";
+import { compressPoints } from "@/utils/compressPoints";
 
 type Props = {
   whiteboardRef: React.RefObject<{
@@ -74,8 +75,12 @@ export const useWhiteboardInteractions = ({
     if (newEntryRef.current === null) return;
     if (tool === "draw-line") {
       const id = getProjectId();
-      console.log(id, newEntryRef.current);
-      whiteboardApi.drawOnWhiteboard(id, newEntryRef.current);
+      const compressedPoints = compressPoints(newEntryRef.current.points);
+
+      whiteboardApi.drawOnWhiteboard(id, {
+        ...newEntryRef.current,
+        points: compressedPoints,
+      });
       brush.onPointerUp(isClickedRef, newEntryRef);
     }
   };
