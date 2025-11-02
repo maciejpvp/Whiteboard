@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { UserComponent } from "../ProjectsList/UserComponent";
 
 type Props = {
@@ -5,12 +6,17 @@ type Props = {
 };
 
 export const ProjectNavbar = ({ title }: Props) => {
+  const navigate = useNavigate();
+
   return (
     <div className="h-16 w-dvw bg-slate-50/80 py-2 px-5 flex items-center justify-between absolute top-0">
-      <div className="h-full flex flex-row items-center justify-center gap-3">
+      <button
+        className="h-full flex flex-row items-center justify-center gap-3 cursor-pointer"
+        onClick={() => navigate("/")}
+      >
         <img src="/DrawnUp.png" alt="DrawnUp Logo" className="w-full h-[90%]" />
         <h1 className="text-xl pb-3">{title}</h1>
-      </div>
+      </button>
       <UserComponent />
     </div>
   );

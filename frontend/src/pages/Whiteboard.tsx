@@ -15,7 +15,10 @@ export const Whiteboard = () => {
 
   useEffect(() => {
     (async () => {
+      if (id?.trim() === "") return;
+
       const response = await whiteboardApi.getItem(id ?? "");
+      console.log(response);
       const item = response.data?.data.item;
 
       if (!item) {

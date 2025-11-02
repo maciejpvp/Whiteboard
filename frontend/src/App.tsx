@@ -5,6 +5,8 @@ import { useAuthStore } from "@/store/authStore";
 import { useEffect } from "react";
 import { LoginPage } from "./pages/login";
 import { CallbackPage } from "./pages/callback";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const App = () => {
   const login = useAuthStore((store) => store.login);
@@ -29,15 +31,20 @@ export const App = () => {
 
   if (!idToken) return null;
 
+  const queryClient = new QueryClient();
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/project/:id" element={<Whiteboard />} />
-        <Route path="/" element={<ProjectsList />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/callback" element={<CallbackPage />} />
-        <Route path="*" element={<Navigate to={"/"} />} />
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/project/:id" element={<Whiteboard />} />
+          <Route path="/" element={<ProjectsList />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/callback" element={<CallbackPage />} />
+          <Route path="*" element={<Navigate to={"/"} />} />
+        </Routes>
+      </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };

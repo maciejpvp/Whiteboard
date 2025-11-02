@@ -6,6 +6,13 @@ export type UserType = {
   surname: string;
 };
 
+export type ItemType = {
+  Title: string;
+  WhiteboardId: string;
+};
+
+export type ListType = ItemType[];
+
 export type Point = { x: number; y: number };
 
 export type LineElement = {
