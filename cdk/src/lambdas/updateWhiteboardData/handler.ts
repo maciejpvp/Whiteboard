@@ -7,6 +7,10 @@ import { sendResponse } from "../utils/sendResponse";
 import { validateData } from "./validateData";
 import { updateWhiteboardData } from "../../services/whiteboard/updateWhiteboardData";
 
+import { SQS } from "aws-sdk";
+
+const sqs = new SQS();
+
 export const handler: Handler = async (
   event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
@@ -22,6 +26,20 @@ export const handler: Handler = async (
 
     // Push newObject into data attribute
     const { success } = await updateWhiteboardData(response);
+
+    await sqs
+      .sendMessage({
+        QueueUrl: process.env.BROADCAST_QUEUE_URL!,
+        MessageBody: JSON.stringify({
+          userId: response.userId,
+          type: "WHITEBOARD_DATA_UPDATE",
+          payload: {
+            whiteboardId: response.id,
+            newObject: response.newObject,
+          },
+        }),
+      })
+      .promise();
 
     if (success) {
       return sendResponse(200, {

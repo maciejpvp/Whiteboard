@@ -79,14 +79,15 @@ export const textTool = {
 
     const finish = () => {
       // Make sure finish is called once
-      document.body.classList.remove("cursor-text");
       setTimeout(() => {
         if (input.parentNode) input.parentNode.removeChild(input);
       }, 0);
 
       if (!document.body.classList.contains("cursor-text")) {
+        console.log("removing");
         return;
       }
+      document.body.classList.remove("cursor-text");
       if (!currentText?.text?.trim()) return;
 
       const id = getProjectId();

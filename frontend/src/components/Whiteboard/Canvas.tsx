@@ -3,7 +3,8 @@ import { useCanvasDraw } from "../../hooks/useCanvasDraw";
 import { useCameraMovement } from "../../hooks/useCameraMovement";
 import { useCameraZoom } from "../../hooks/useCameraZoom";
 import { useWhiteboardInteractions } from "../../hooks/useWhiteboardInteractions";
-import type { WhiteboardData } from "../../types";
+import type { WhiteboardData, WhiteboardElement } from "../../types";
+import { useWebSocketStore } from "@/store/wsStore";
 
 const WORLD_SIZE_X = 1000;
 const WORLD_SIZE_Y = 1000;
@@ -17,6 +18,9 @@ export const Canvas = ({
   const zoomRef = useCameraZoom();
   const isSpacePressedRef = useRef<boolean>(false);
   const dataRef = useRef<WhiteboardData>(defaultDataValue);
+
+  const on = useWebSocketStore((store) => store.on);
+  const off = useWebSocketStore((store) => store.off);
 
   const { cameraRef, handleMouseDown, handleMouseMove, handleMouseUp } =
     useCameraMovement({ zoom: zoomRef, isSpacePressedRef });
@@ -78,6 +82,28 @@ export const Canvas = ({
     onPointerUp();
     handleMouseUp();
   };
+
+  // Real Time useImperativeHandle(
+
+  useEffect(() => {
+    const handler = (data: {
+      whiteboardId: string;
+      newObject: WhiteboardElement;
+    }) => {
+      console.log(data);
+
+      if (dataRef.current.some((i) => i.id === data.newObject.id)) return;
+
+      dataRef.current.push(data.newObject);
+      console.log("Added");
+    };
+
+    on("WHITEBOARD_DATA_UPDATE", handler);
+
+    return () => {
+      off("WHITEBOARD_DATA_UPDATE", handler);
+    };
+  }, [on, off]);
 
   return (
     <canvas

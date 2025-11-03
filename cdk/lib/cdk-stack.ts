@@ -8,6 +8,7 @@ import { getAPIGatewayRoutes } from "../infra/getAPIGatewayRoutes";
 import { createConnectionsTable } from "../infra/createConnectionsTable";
 import { createWebSocketAPI } from "../infra/createWebSocketAPI";
 import * as iam from "aws-cdk-lib/aws-iam";
+import { createWebSocketSQS } from "../infra/createWebSocketSQS";
 
 interface WhiteboardStackProps extends cdk.StackProps {
   stage: string;
@@ -41,6 +42,21 @@ export class WhiteboardStack extends cdk.Stack {
     });
 
     const { endpoint, wsApi } = createWebSocketAPI(this, lambdas, props.stage);
+
+    const broadcastQueue = createWebSocketSQS({
+      stack: this,
+      stage,
+      broadcastLambda: lambdas.broadcastUpdates.lambdaFunction,
+    });
+
+    lambdas.updateWhiteboardData.lambdaFunction.addEnvironment(
+      "BROADCAST_QUEUE_URL",
+      broadcastQueue.queueUrl,
+    );
+
+    broadcastQueue.grantSendMessages(
+      lambdas.updateWhiteboardData.lambdaFunction,
+    );
 
     const needWsAccess = Object.values(lambdas).filter((l) => l.grantWsAccess);
 

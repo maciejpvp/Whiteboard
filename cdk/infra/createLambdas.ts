@@ -90,6 +90,18 @@ export const createLambdas = (stack: Stack, props: Props) => {
         CLIENT_ID: userPoolClient.userPoolClientId,
       },
     },
+    {
+      name: "broadcastUpdates",
+      stage,
+      grantWsAccess: true,
+      resources: [
+        {
+          grant: (fn) => connectionsTable.grantReadWriteData(fn),
+          envName: "connectionsDB",
+          envValue: connectionsTable.tableName,
+        },
+      ],
+    },
   ];
 
   const lambdas = Object.fromEntries(
