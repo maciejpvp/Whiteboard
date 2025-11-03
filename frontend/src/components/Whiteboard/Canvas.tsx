@@ -18,8 +18,6 @@ export const Canvas = ({
   const isSpacePressedRef = useRef<boolean>(false);
   const dataRef = useRef<WhiteboardData>(defaultDataValue);
 
-  console.log(dataRef);
-
   const { cameraRef, handleMouseDown, handleMouseMove, handleMouseUp } =
     useCameraMovement({ zoom: zoomRef, isSpacePressedRef });
 

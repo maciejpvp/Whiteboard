@@ -1,13 +1,18 @@
 import { aws_dynamodb, Stack } from "aws-cdk-lib";
+import * as cognito from "aws-cdk-lib/aws-cognito";
 import { CreateLambda, CreateLambdaProps } from "../constructs/CreateLambda";
 
 type Props = {
   whiteboardTable: aws_dynamodb.Table;
   stage: string;
+  connectionsTable: aws_dynamodb.Table;
+  userPool: cognito.UserPool;
+  userPoolClient: cognito.UserPoolClient;
 };
 
 export const createLambdas = (stack: Stack, props: Props) => {
-  const { whiteboardTable, stage } = props;
+  const { whiteboardTable, connectionsTable, userPool, userPoolClient, stage } =
+    props;
 
   const lambdaConfig: CreateLambdaProps[] = [
     {
@@ -45,6 +50,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
     },
     {
       name: "updateWhiteboardData",
+      grantWsAccess: true,
       stage,
       resources: [
         {
@@ -53,6 +59,36 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envValue: whiteboardTable.tableName,
         },
       ],
+    },
+    {
+      name: "connectWS",
+      stage,
+      resources: [
+        {
+          grant: (fn) => connectionsTable.grantWriteData(fn),
+          envName: "connectionsDB",
+          envValue: connectionsTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "disconnectWS",
+      stage,
+      resources: [
+        {
+          grant: (fn) => connectionsTable.grantWriteData(fn),
+          envName: "connectionsDB",
+          envValue: connectionsTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "authorizer",
+      stage,
+      env: {
+        USER_POOL_ID: userPool.userPoolId,
+        CLIENT_ID: userPoolClient.userPoolClientId,
+      },
     },
   ];
 
