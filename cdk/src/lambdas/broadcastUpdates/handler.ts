@@ -6,8 +6,6 @@ export const handler: SQSHandler = async (event) => {
     for (const record of event.Records) {
       const { userId, type, payload } = JSON.parse(record.body);
 
-      console.log(`HERE ${userId}`);
-
       await wsSendMessage({
         userId,
         data: JSON.stringify({
@@ -17,6 +15,6 @@ export const handler: SQSHandler = async (event) => {
       });
     }
   } catch (err) {
-    console.log(`ERROR OCCURE: ${err}`);
+    console.log(`ERROR: ${err}`);
   }
 };

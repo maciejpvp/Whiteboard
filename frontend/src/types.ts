@@ -67,3 +67,15 @@ export type Coords = {
   x: number;
   y: number;
 };
+
+export type MessageMap = {
+  WHITEBOARD_DATA_UPDATE: {
+    whiteboardId: string;
+    newObject: unknown;
+  };
+};
+
+export type WebSocketMessage<T extends keyof MessageMap = keyof MessageMap> = {
+  type: T;
+  payload: MessageMap[T];
+};

@@ -1,12 +1,8 @@
+import { MessageMap, WebSocketMessage } from "@/types";
 import { create } from "zustand";
 
-type WebSocketPayload = {
-  type: string;
-  payload: any;
-};
-
 type EventCallbacks = {
-  [type: string]: ((payload: any) => void)[];
+  [K in keyof MessageMap]?: ((payload: MessageMap[K]) => void)[];
 };
 
 type WebSocketStore = {
@@ -16,9 +12,15 @@ type WebSocketStore = {
 
   connect: (url: string) => void;
   disconnect: () => void;
-  on: (type: string, callback: (payload: any) => void) => void;
-  off: (type: string, callback: (payload: any) => void) => void;
-  send: (type: string, payload: string) => void;
+  on: <T extends keyof MessageMap>(
+    type: T,
+    callback: (payload: MessageMap[T]) => void,
+  ) => void;
+  off: <T extends keyof MessageMap>(
+    type: T,
+    callback: (payload: MessageMap[T]) => void,
+  ) => void;
+  send: <T extends keyof MessageMap>(type: T, payload: MessageMap[T]) => void;
 };
 
 export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
@@ -26,65 +28,55 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
   connected: false,
   events: {},
 
-  connect: (url: string) => {
-    if (get().ws) return; // already connected
+  connect: (url) => {
+    if (get().ws) return;
 
     const ws = new WebSocket(url);
 
-    ws.onopen = () => {
-      set({ connected: true });
-      console.log("WebSocket connected");
-    };
+    ws.onopen = () => set({ connected: true });
+    ws.onclose = () => set({ connected: false, ws: null });
 
     ws.onmessage = (event) => {
       try {
-        console.log(event.data);
-        const data: WebSocketPayload = JSON.parse(event.data);
+        const data: WebSocketMessage = JSON.parse(event.data);
         const callbacks = get().events[data.type] || [];
-
         callbacks.forEach((cb) => cb(data.payload));
       } catch (err) {
-        console.error("Invalid message", err);
+        console.error("Invalid WS message", err);
       }
-    };
-
-    ws.onclose = () => {
-      set({ connected: false, ws: null });
-      console.log("WebSocket disconnected");
     };
 
     set({ ws });
   },
 
   disconnect: () => {
+    get().ws?.close();
+    set({ ws: null, connected: false });
+  },
+
+  on: (type, callback) => {
+    set((state) => ({
+      events: {
+        ...state.events,
+        [type]: [...(state.events[type] || []), callback],
+      },
+    }));
+  },
+
+  off: (type, callback) => {
+    set((state) => ({
+      events: {
+        ...state.events,
+        [type]: (state.events[type] || []).filter((cb) => cb !== callback),
+      },
+    }));
+  },
+
+  send: (type, payload) => {
     const ws = get().ws;
-    if (ws) {
-      ws.close();
-      set({ ws: null, connected: false });
-    }
-  },
-
-  on: (type: string, callback: (payload: any) => void) => {
-    const events = { ...get().events };
-
-    if (!events[type]) events[type] = [];
-    events[type].push(callback);
-    set({ events });
-  },
-
-  off: (type: string, callback: (payload: any) => void) => {
-    const events = { ...get().events };
-
-    if (!events[type]) return;
-    events[type] = events[type].filter((cb) => cb !== callback);
-    set({ events });
-  },
-
-  send: (type: string, payload: any) => {
-    const ws = get().ws;
-
     if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ type, payload }));
+      const msg: WebSocketMessage<typeof type> = { type, payload };
+      ws.send(JSON.stringify(msg));
     }
   },
 }));
