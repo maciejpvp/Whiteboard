@@ -4,6 +4,7 @@ import { CreateLambda, CreateLambdaProps } from "../constructs/CreateLambda";
 
 type Props = {
   whiteboardTable: aws_dynamodb.Table;
+  whiteboardAccessTable: aws_dynamodb.Table;
   stage: string;
   connectionsTable: aws_dynamodb.Table;
   userPool: cognito.UserPool;
@@ -11,8 +12,14 @@ type Props = {
 };
 
 export const createLambdas = (stack: Stack, props: Props) => {
-  const { whiteboardTable, connectionsTable, userPool, userPoolClient, stage } =
-    props;
+  const {
+    whiteboardTable,
+    whiteboardAccessTable,
+    connectionsTable,
+    userPool,
+    userPoolClient,
+    stage,
+  } = props;
 
   const lambdaConfig: CreateLambdaProps[] = [
     {
@@ -50,13 +57,44 @@ export const createLambdas = (stack: Stack, props: Props) => {
     },
     {
       name: "updateWhiteboardData",
-      grantWsAccess: true,
       stage,
       resources: [
         {
           grant: (fn) => whiteboardTable.grantReadWriteData(fn),
           envName: "whiteboardTable",
           envValue: whiteboardTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "shareWhiteboard",
+      stage,
+      resources: [
+        {
+          grant: (fn) => whiteboardTable.grantReadWriteData(fn),
+          envName: "whiteboardTable",
+          envValue: whiteboardTable.tableName,
+        },
+        {
+          grant: (fn) => whiteboardAccessTable.grantReadWriteData(fn),
+          envName: "whiteboardAccessTable",
+          envValue: whiteboardAccessTable.tableName,
+        },
+      ],
+    },
+    {
+      name: "unshareWhiteboard",
+      stage,
+      resources: [
+        {
+          grant: (fn) => whiteboardTable.grantReadWriteData(fn),
+          envName: "whiteboardTable",
+          envValue: whiteboardTable.tableName,
+        },
+        {
+          grant: (fn) => whiteboardAccessTable.grantReadWriteData(fn),
+          envName: "whiteboardAccessTable",
+          envValue: whiteboardAccessTable.tableName,
         },
       ],
     },

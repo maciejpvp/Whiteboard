@@ -9,6 +9,7 @@ import { createConnectionsTable } from "../infra/createConnectionsTable";
 import { createWebSocketAPI } from "../infra/createWebSocketAPI";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { createWebSocketSQS } from "../infra/createWebSocketSQS";
+import { createWhiteboardAccessTable } from "../infra/createWhiteboardAccessTable";
 
 interface WhiteboardStackProps extends cdk.StackProps {
   stage: string;
@@ -23,12 +24,18 @@ export class WhiteboardStack extends cdk.Stack {
 
     const whiteboardTable = createWhiteboardTable({ stack: this, stage });
 
+    const whiteboardAccessTable = createWhiteboardAccessTable({
+      stack: this,
+      stage,
+    });
+
     const connectionsTable = createConnectionsTable(this, {
       stage: props.stage,
     });
 
     const lambdas = createLambdas(this, {
       whiteboardTable,
+      whiteboardAccessTable,
       stage,
       connectionsTable,
       userPool,

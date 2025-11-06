@@ -37,6 +37,13 @@ export const getAPIGatewayRoutes = ({ lambdas }: Props) => {
       lambda: lambdas.updateWhiteboardData.lambdaFunction,
       secured: true,
     },
+    {
+      name: "shareWhiteboard",
+      type: "POST",
+      route: "whiteboard/share/{id}",
+      lambda: lambdas.updateWhiteboardData.lambdaFunction,
+      secured: true,
+    },
   ];
 
   return routes;
