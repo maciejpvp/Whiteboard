@@ -1,5 +1,6 @@
 import { aws_dynamodb, Stack } from "aws-cdk-lib";
 import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { CreateLambda, CreateLambdaProps } from "../constructs/CreateLambda";
 
 type Props = {
@@ -34,6 +35,22 @@ export const createLambdas = (stack: Stack, props: Props) => {
       ],
     },
     {
+      name: "deleteWhiteboard",
+      stage,
+      resources: [
+        {
+          grant: (fn) => whiteboardTable.grantReadWriteData(fn),
+          envName: "whiteboardTable",
+          envValue: whiteboardTable.tableName,
+        },
+        {
+          grant: (fn) => whiteboardAccessTable.grantReadWriteData(fn),
+          envName: "whiteboardAccessTable",
+          envValue: whiteboardAccessTable.tableName,
+        },
+      ],
+    },
+    {
       name: "getWhiteboardsList",
       stage,
       resources: [
@@ -41,6 +58,11 @@ export const createLambdas = (stack: Stack, props: Props) => {
           grant: (fn) => whiteboardTable.grantReadData(fn),
           envName: "whiteboardTable",
           envValue: whiteboardTable.tableName,
+        },
+        {
+          grant: (fn) => whiteboardAccessTable.grantReadWriteData(fn),
+          envName: "whiteboardAccessTable",
+          envValue: whiteboardAccessTable.tableName,
         },
       ],
     },
@@ -55,6 +77,18 @@ export const createLambdas = (stack: Stack, props: Props) => {
         },
       ],
     },
+    {
+      name: "getSharedWhiteboard",
+      stage,
+      resources: [
+        {
+          grant: (fn) => whiteboardTable.grantReadData(fn),
+          envName: "whiteboardTable",
+          envValue: whiteboardTable.tableName,
+        },
+      ],
+    },
+
     {
       name: "updateWhiteboardData",
       stage,
@@ -79,6 +113,20 @@ export const createLambdas = (stack: Stack, props: Props) => {
           grant: (fn) => whiteboardAccessTable.grantReadWriteData(fn),
           envName: "whiteboardAccessTable",
           envValue: whiteboardAccessTable.tableName,
+        },
+        {
+          grant: (fn) => {
+            fn.addToRolePolicy(
+              new iam.PolicyStatement({
+                actions: ["cognito-idp:ListUsers"],
+                resources: [
+                  `arn:aws:cognito-idp:${stack.region}:${stack.account}:userpool/${userPool.userPoolId}`,
+                ],
+              }),
+            );
+          },
+          envName: "userPoolId",
+          envValue: userPool.userPoolId,
         },
       ],
     },
@@ -132,6 +180,7 @@ export const createLambdas = (stack: Stack, props: Props) => {
       name: "broadcastUpdates",
       stage,
       grantWsAccess: true,
+      timeoutSec: 10,
       resources: [
         {
           grant: (fn) => connectionsTable.grantReadWriteData(fn),

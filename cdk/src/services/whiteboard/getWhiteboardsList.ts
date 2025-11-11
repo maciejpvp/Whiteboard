@@ -15,7 +15,7 @@ export const getWhiteboardsList = async ({ userId }: Props) => {
     ExpressionAttributeValues: {
       ":uid": userId,
     },
-    ProjectionExpression: "WhiteboardId, Title",
+    ProjectionExpression: "WhiteboardId, Title, updatedAt, shareTo",
   });
 
   const response = await docClient.send(command);

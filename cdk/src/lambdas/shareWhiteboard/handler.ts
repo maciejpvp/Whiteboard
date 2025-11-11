@@ -5,7 +5,7 @@ import {
 } from "aws-lambda";
 import { sendResponse } from "../utils/sendResponse";
 import { validateData } from "./validateData";
-import { updateWhiteboardShare } from "../../services/whiteboard/updateWhiteboardShare";
+import { shareWhiteboard } from "../../services/whiteboard/shareWhiteboard";
 
 export const handler: Handler = async (
   event: APIGatewayProxyEvent,
@@ -18,7 +18,12 @@ export const handler: Handler = async (
     });
   }
 
-  const updateWhiteboardShareResponse = await updateWhiteboardShare(response);
+  const updateWhiteboardShareResponse = await shareWhiteboard({
+    userId: response.email,
+    id: response.id,
+    access: response.access,
+    ownerId: response.userId,
+  });
 
   if (updateWhiteboardShareResponse.success) {
     return sendResponse(200, {

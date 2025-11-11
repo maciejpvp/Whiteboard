@@ -19,13 +19,15 @@ export const updateWhiteboardData = async ({
     TableName: whiteboardTable,
     Key: { UserId: userId, WhiteboardId: id },
     UpdateExpression:
-      "SET #data = list_append(if_not_exists(#data, :empty_list), :newObject)",
+      "SET #data = list_append(if_not_exists(#data, :empty_list), :newObject), #updatedAt = :now",
     ExpressionAttributeNames: {
       "#data": "data",
+      "#updatedAt": "updatedAt",
     },
     ExpressionAttributeValues: {
       ":newObject": [newObject],
       ":empty_list": [],
+      ":now": new Date().toISOString(),
     },
     ReturnValues: "NONE",
   });

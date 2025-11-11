@@ -2,6 +2,7 @@ import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "path";
+import * as cdk from "aws-cdk-lib";
 
 export interface ResourceConfig {
   grant: (lambdaFn: lambda.IFunction) => void;
@@ -15,6 +16,7 @@ export interface CreateLambdaProps {
   grantWsAccess?: boolean;
   env?: Record<string, string>;
   resources?: ResourceConfig[];
+  timeoutSec?: number;
 }
 
 export class CreateLambda extends Construct {
@@ -26,7 +28,7 @@ export class CreateLambda extends Construct {
 
     this.grantWsAccess = props.grantWsAccess ?? false;
 
-    const { name, stage, env = {}, resources = [] } = props;
+    const { name, stage, env = {}, resources = [], timeoutSec = 3 } = props;
 
     this.lambdaFunction = new NodejsFunction(this, `${name}-${stage}`, {
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -36,6 +38,7 @@ export class CreateLambda extends Construct {
         STAGE: stage,
         ...env,
       },
+      timeout: cdk.Duration.seconds(timeoutSec),
     });
 
     for (const { grant, envName, envValue } of resources) {

@@ -9,11 +9,11 @@ type Props = {
 export const createWhiteboardAccessTable = (props: Props) => {
   const { stack, stage } = props;
 
-  const tableName = `WhiteboardAccessTable-${stage}`;
+  const tableName = `WhiteboardAccessTable-${stage}-2`;
 
   const table = new dynamodb.Table(stack, tableName, {
     tableName,
-    partitionKey: { name: "Email", type: dynamodb.AttributeType.STRING },
+    partitionKey: { name: "UserId", type: dynamodb.AttributeType.STRING },
     sortKey: { name: "WhiteboardId", type: dynamodb.AttributeType.STRING },
     billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     removalPolicy: RemovalPolicy.DESTROY,

@@ -12,4 +12,23 @@ export const whiteboardApi = {
     apiClient.post(`/whiteboard/draw/${id}`, {
       newObject,
     }),
+  shareWhiteboard: (id: string, email: string, access: "read" | "write") =>
+    apiClient.post(`/whiteboard/share/${id}`, {
+      email,
+      access,
+    }),
+
+  createWhiteboard: (id: string, name: string) =>
+    apiClient.post("/whiteboard", {
+      id,
+      name,
+    }),
+
+  editWhiteboard: (id: string, name: string) =>
+    apiClient.post("/whiteboard", {
+      id,
+      name,
+    }),
+
+  deleteWhiteboard: (id: string) => apiClient.delete(`/whiteboard/${id}`),
 };

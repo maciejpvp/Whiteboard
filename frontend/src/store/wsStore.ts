@@ -46,6 +46,8 @@ export const useWebSocketStore = create<WebSocketStore>((set, get) => ({
       }
     };
 
+    console.log("Connected");
+
     set({ ws });
   },
 

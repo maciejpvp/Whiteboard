@@ -31,6 +31,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         window.location.pathname = "/login";
       }
 
+      set({ idToken: "NO TOKEN" });
+
       return;
     }
 

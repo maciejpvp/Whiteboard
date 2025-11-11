@@ -5,6 +5,7 @@ import { getWhiteboardCoords } from "../draw/getWhiteboardCoords";
 import { isCursorInsideWhiteboard } from "../isCursorInsideWhiteboard";
 import { v4 as uuidv4 } from "uuid";
 import { getProjectId } from "../getProjectId";
+import { mutateUpdatedAt } from "../mutateUpdatedAt";
 
 type TextProps = {
   e: React.PointerEvent<HTMLCanvasElement>;
@@ -93,6 +94,7 @@ export const textTool = {
       const id = getProjectId();
 
       whiteboardApi.drawOnWhiteboard(id, currentText);
+      mutateUpdatedAt(id);
     };
 
     input.addEventListener("blur", finish);

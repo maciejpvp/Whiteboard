@@ -9,11 +9,10 @@ export const useGetList = () => {
     queryFn: async () => {
       const response = await whiteboardApi.getList();
 
-      const list: ListType = response.data.data.items;
+      const list: ListType = response.data.data.items || [];
+      const sharedList: ListType = response.data.data.sharedItems || [];
 
-      if (!list) return [];
-
-      return list;
+      return { list, sharedList };
     },
     staleTime: 15 * 60 * 1000,
   });

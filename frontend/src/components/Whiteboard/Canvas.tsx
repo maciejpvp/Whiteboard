@@ -5,6 +5,7 @@ import { useCameraZoom } from "../../hooks/useCameraZoom";
 import { useWhiteboardInteractions } from "../../hooks/useWhiteboardInteractions";
 import type { WhiteboardData, WhiteboardElement } from "../../types";
 import { useWebSocketStore } from "@/store/wsStore";
+import { mutateUpdatedAt } from "@/utils/mutateUpdatedAt";
 
 const WORLD_SIZE_X = 1000;
 const WORLD_SIZE_Y = 1000;
@@ -90,12 +91,12 @@ export const Canvas = ({
       whiteboardId: string;
       newObject: WhiteboardElement;
     }) => {
-      console.log(data);
-
       if (dataRef.current.some((i) => i.id === data.newObject.id)) return;
 
       dataRef.current.push(data.newObject);
-      console.log("Added");
+
+      //Edit updatedAt attribute of whiteboard
+      mutateUpdatedAt(data.whiteboardId);
     };
 
     on("WHITEBOARD_DATA_UPDATE", handler);

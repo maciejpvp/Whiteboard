@@ -6,6 +6,7 @@ import { textTool } from "../utils/tools/text";
 import { whiteboardApi } from "@/api/whiteboard";
 import { getProjectId } from "@/utils/getProjectId";
 import { compressPoints } from "@/utils/compressPoints";
+import { mutateUpdatedAt } from "@/utils/mutateUpdatedAt";
 
 type Props = {
   whiteboardRef: React.RefObject<{
@@ -82,6 +83,7 @@ export const useWhiteboardInteractions = ({
         points: compressedPoints,
       });
       brush.onPointerUp(isClickedRef, newEntryRef);
+      mutateUpdatedAt(id);
     }
   };
 

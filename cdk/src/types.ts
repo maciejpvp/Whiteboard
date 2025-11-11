@@ -22,10 +22,16 @@ export type TextElement = {
 export type WhiteboardElement = LineElement | TextElement;
 export type WhiteboardData = WhiteboardElement[];
 
+export type WhiteboardItemShareToItemType = {
+  userId: string;
+  access: "read" | "write";
+};
+
 export type WhiteboardItemType = {
   UserId: string;
   WhiteboardId: string;
   name: string;
   data: WhiteboardData;
   createdAt: Date;
+  shareTo?: WhiteboardItemShareToItemType[];
 };

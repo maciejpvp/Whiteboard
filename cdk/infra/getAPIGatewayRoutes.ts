@@ -17,6 +17,13 @@ export const getAPIGatewayRoutes = ({ lambdas }: Props) => {
       requestSchema: createWhiteboardSchema,
     },
     {
+      name: "deleteWhiteboard",
+      type: "DELETE",
+      route: "whiteboard/{id}",
+      lambda: lambdas.deleteWhiteboard.lambdaFunction,
+      secured: true,
+    },
+    {
       name: "getWhiteboardsList",
       type: "GET",
       route: "whiteboard",
@@ -31,6 +38,14 @@ export const getAPIGatewayRoutes = ({ lambdas }: Props) => {
       secured: true,
     },
     {
+      name: "getSharedWhiteboardItem",
+      type: "GET",
+      route: "whiteboard/shared/{ownerId}/{id}",
+      lambda: lambdas.getSharedWhiteboard.lambdaFunction,
+      secured: true,
+    },
+
+    {
       name: "updateWhiteboardData",
       type: "POST",
       route: "whiteboard/draw/{id}",
@@ -41,7 +56,7 @@ export const getAPIGatewayRoutes = ({ lambdas }: Props) => {
       name: "shareWhiteboard",
       type: "POST",
       route: "whiteboard/share/{id}",
-      lambda: lambdas.updateWhiteboardData.lambdaFunction,
+      lambda: lambdas.shareWhiteboard.lambdaFunction,
       secured: true,
     },
   ];

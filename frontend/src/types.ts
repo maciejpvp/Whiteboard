@@ -6,9 +6,18 @@ export type UserType = {
   surname: string;
 };
 
+export type ShareToItem = {
+  userId: string; //Its Email
+  access: "read" | "write";
+};
+
 export type ItemType = {
   Title: string;
   WhiteboardId: string;
+  updatedAt: string; // ISO string
+  shareTo?: ShareToItem[];
+  shared?: boolean;
+  owner: string;
 };
 
 export type ListType = ItemType[];
@@ -71,11 +80,16 @@ export type Coords = {
 export type MessageMap = {
   WHITEBOARD_DATA_UPDATE: {
     whiteboardId: string;
-    newObject: unknown;
+    newObject: WhiteboardElement;
   };
 };
 
 export type WebSocketMessage<T extends keyof MessageMap = keyof MessageMap> = {
   type: T;
   payload: MessageMap[T];
+};
+
+export type oldItemsType = {
+  list: ItemType[];
+  sharedList: ItemType[];
 };

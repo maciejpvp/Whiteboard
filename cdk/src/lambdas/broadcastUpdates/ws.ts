@@ -2,7 +2,7 @@ import {
   ApiGatewayManagementApiClient,
   PostToConnectionCommand,
 } from "@aws-sdk/client-apigatewaymanagementapi";
-import { QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand, BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../utils/dynamoClient";
 
 const apiGwClient = new ApiGatewayManagementApiClient({
@@ -25,14 +25,9 @@ export const getConnectionIdsByUserId = async ({
   });
 
   const response = await docClient.send(command);
-
   const items = response.Items ?? [];
 
-  const connectionIds = items.map((item) => {
-    return item.connectionId;
-  });
-
-  return connectionIds;
+  return items.map((item) => item.connectionId);
 };
 
 type wsSendMessageProps = {
@@ -42,6 +37,7 @@ type wsSendMessageProps = {
 
 export const wsSendMessage = async ({ userId, data }: wsSendMessageProps) => {
   const connectionIds = await getConnectionIdsByUserId({ userId });
+  const staleConnections: { userId: string; connectionId: string }[] = [];
 
   await Promise.all(
     connectionIds.map(async (connectionId) => {
@@ -54,13 +50,36 @@ export const wsSendMessage = async ({ userId, data }: wsSendMessageProps) => {
         );
         console.log(`✅ Sent message to ${connectionId}`);
       } catch (err: any) {
-        if (err.statusCode === 410) {
+        if (err.$metadata?.httpStatusCode === 410) {
           console.log(`⚠️ Connection ${connectionId} is gone (stale).`);
-          // Tutaj możesz usunąć connectionId z DynamoDB
+          staleConnections.push({ userId, connectionId });
         } else {
           console.error(`❌ Failed to send message to ${connectionId}:`, err);
         }
       }
     }),
   );
+
+  if (staleConnections.length > 0) {
+    const deleteRequests = staleConnections.map((conn) => ({
+      DeleteRequest: {
+        Key: { userId: conn.userId, connectionId: conn.connectionId },
+      },
+    }));
+
+    for (let i = 0; i < deleteRequests.length; i += 25) {
+      const batch = deleteRequests.slice(i, i + 25);
+      await docClient.send(
+        new BatchWriteCommand({
+          RequestItems: {
+            [tableName]: batch,
+          },
+        }),
+      );
+    }
+
+    console.log(
+      `Deleted ${staleConnections.length} stale connections for user ${userId}`,
+    );
+  }
 };

@@ -2,33 +2,33 @@ import { TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "../../lambdas/utils/dynamoClient";
 
 const whiteboardTable = process.env.whiteboardTable!;
-const sharedFilesTable = process.env.sharedFilesTable!;
+const whiteboardAccessTable = process.env.whiteboardAccessTable!;
 
 type Props = {
   userId: string;
   id: string;
-  email: string;
   access: "read" | "write";
+  ownerId: string;
 };
 
 type Response = {
   success: boolean;
 };
 
-export const updateWhiteboardShare = async ({
+export const shareWhiteboard = async ({
   userId,
   id,
-  email,
   access,
+  ownerId,
 }: Props): Promise<Response> => {
-  const shareToItem = { email, access };
+  const shareToItem = { userId, access };
 
   const command = new TransactWriteCommand({
     TransactItems: [
       {
         Update: {
           TableName: whiteboardTable,
-          Key: { UserId: userId, WhiteboardId: id },
+          Key: { UserId: ownerId, WhiteboardId: id },
           UpdateExpression:
             "SET #shareTo = list_append(if_not_exists(#shareTo, :empty_list), :shareToItem)",
           ExpressionAttributeNames: {
@@ -42,15 +42,15 @@ export const updateWhiteboardShare = async ({
       },
       {
         Put: {
-          TableName: sharedFilesTable,
+          TableName: whiteboardAccessTable,
           Item: {
-            Email: email,
+            UserId: userId,
             WhiteboardId: id,
-            OwnerId: userId,
             Access: access,
+            OwnerId: ownerId,
           },
           ConditionExpression:
-            "attribute_not_exists(Email) AND attribute_not_exists(WhiteboardId)",
+            "attribute_not_exists(UserId) AND attribute_not_exists(WhiteboardId)",
         },
       },
     ],

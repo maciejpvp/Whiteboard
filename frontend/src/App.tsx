@@ -5,10 +5,11 @@ import { useAuthStore } from "@/store/authStore";
 import { useEffect } from "react";
 import { LoginPage } from "./pages/login";
 import { CallbackPage } from "./pages/callback";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useWebSocketStore } from "./store/wsStore";
 import { websocketUrl } from "./constants/ws";
+import { queryClient } from "./lib/queryClient";
 
 export const App = () => {
   const login = useAuthStore((store) => store.login);
@@ -44,11 +45,9 @@ export const App = () => {
     return () => {
       disconnectWS();
     };
-  }, [idToken, isConnected]);
+  }, [idToken]);
 
   if (!idToken) return null;
-
-  const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
