@@ -27,11 +27,17 @@ export const handler: Handler = async (
     // Push newObject into data attribute
     const { success } = await updateWhiteboardData(response);
 
+    if (!success) {
+      return sendResponse(500, {
+        message: "Something went wrong",
+      });
+    }
+
     await sqs
       .sendMessage({
         QueueUrl: process.env.BROADCAST_QUEUE_URL!,
         MessageBody: JSON.stringify({
-          userId: response.userId,
+          userId: response.ownerId,
           type: "WHITEBOARD_DATA_UPDATE",
           payload: {
             whiteboardId: response.id,
@@ -41,15 +47,9 @@ export const handler: Handler = async (
       })
       .promise();
 
-    if (success) {
-      return sendResponse(200, {
-        message: "Successfully updated data",
-      });
-    } else {
-      return sendResponse(500, {
-        message: "Something went wrong",
-      });
-    }
+    return sendResponse(200, {
+      message: "Successfully updated data",
+    });
   } catch (err) {
     console.log("ERROR: ", err);
     return sendResponse(500, {

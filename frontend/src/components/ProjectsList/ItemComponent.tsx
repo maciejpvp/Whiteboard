@@ -29,6 +29,16 @@ export const ItemComponent = ({ item }: Props) => {
     setDeleteOpen(true);
   };
 
+  const handleOpen = () => {
+    if (item.shared) {
+      navigate(`/project/${item.WhiteboardId}`, {
+        state: { ownerId: item.owner },
+      });
+      return;
+    }
+    navigate(`/project/${item.WhiteboardId}`);
+  };
+
   return (
     <>
       <Box
@@ -39,7 +49,7 @@ export const ItemComponent = ({ item }: Props) => {
       hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99]
       flex flex-col justify-between h-[170px]
     "
-        onClick={() => navigate(`/project/${item.WhiteboardId}`)}
+        onClick={handleOpen}
       >
         <div className="flex justify-between items-start">
           <Typography

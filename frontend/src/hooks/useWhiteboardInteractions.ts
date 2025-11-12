@@ -78,10 +78,14 @@ export const useWhiteboardInteractions = ({
       const id = getProjectId();
       const compressedPoints = compressPoints(newEntryRef.current.points);
 
-      whiteboardApi.drawOnWhiteboard(id, {
-        ...newEntryRef.current,
-        points: compressedPoints,
-      });
+      whiteboardApi.drawOnWhiteboard(
+        id,
+        {
+          ...newEntryRef.current,
+          points: compressedPoints,
+        },
+        useWhiteboardStore.getState().ownerId,
+      );
       brush.onPointerUp(isClickedRef, newEntryRef);
       mutateUpdatedAt(id);
     }

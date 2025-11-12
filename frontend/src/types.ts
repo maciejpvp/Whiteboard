@@ -4,6 +4,7 @@ export type UserType = {
   avatar: string;
   fullname: string;
   surname: string;
+  sub: string;
 };
 
 export type ShareToItem = {

@@ -10,6 +10,7 @@ interface GoogleIdTokenPayload {
   picture?: string;
   name?: string;
   family_name?: string;
+  sub?: string;
 }
 
 type AuthState = {
@@ -41,6 +42,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (idToken) {
       set({ idToken });
       const decoded = jwtDecode<GoogleIdTokenPayload>(idToken);
+      console.log(decoded.sub);
 
       set({
         user: {
@@ -49,6 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           avatar: decoded?.picture ?? "",
           fullname: decoded?.name ?? "",
           surname: decoded?.family_name ?? "",
+          sub: decoded?.sub ?? "",
         },
       });
     } else {

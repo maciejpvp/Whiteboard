@@ -8,6 +8,7 @@ import { getCognitoUser } from "../utils/getCognitoUser";
 
 type BodyType = {
   newObject: WhiteboardElement;
+  ownerId: string;
 };
 
 type PathParamsType = {
@@ -20,6 +21,7 @@ const pathParamsSchema = Joi.object<PathParamsType>({
 
 const bodySchema = Joi.object<BodyType>({
   newObject: whiteboardElementSchema.required(),
+  ownerId: Joi.string().uuid().required(),
 });
 
 type Response =
@@ -27,7 +29,8 @@ type Response =
       ok: true;
       id: string;
       newObject: WhiteboardElement;
-      userId: string;
+      requesterId: string;
+      ownerId: string;
     }
   | {
       ok: false;
@@ -63,5 +66,11 @@ export const validateData = (event: APIGatewayProxyEvent): Response => {
 
   const { userId } = getCognitoUser(event);
 
-  return { ok: true, id, newObject: body.newObject, userId };
+  return {
+    ok: true,
+    id,
+    newObject: body.newObject,
+    requesterId: userId,
+    ownerId: body.ownerId,
+  };
 };

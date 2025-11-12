@@ -93,7 +93,11 @@ export const textTool = {
 
       const id = getProjectId();
 
-      whiteboardApi.drawOnWhiteboard(id, currentText);
+      whiteboardApi.drawOnWhiteboard(
+        id,
+        currentText,
+        useWhiteboardStore.getState().ownerId,
+      );
       mutateUpdatedAt(id);
     };
 

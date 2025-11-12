@@ -2,40 +2,54 @@ import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { WhiteboardElement } from "../../types";
 import { docClient } from "../../lambdas/utils/dynamoClient";
 
-const whiteboardTable = process.env.whiteboardTable;
+const whiteboardTable = process.env.whiteboardTable!;
 
 type Props = {
-  userId: string;
+  requesterId: string; // user wykonujący request
+  ownerId: string; // właściciel tablicy
   id: string;
   newObject: WhiteboardElement;
 };
 
 export const updateWhiteboardData = async ({
-  userId,
+  requesterId,
+  ownerId,
   id,
   newObject,
 }: Props) => {
   const command = new UpdateCommand({
     TableName: whiteboardTable,
-    Key: { UserId: userId, WhiteboardId: id },
+    Key: { UserId: ownerId, WhiteboardId: id },
+
+    // allow update if requester is owner OR requester has { userId, access: "write" }
+    ConditionExpression:
+      "UserId = :requester OR contains(#shareTo, :writeAccessObj)",
+
     UpdateExpression:
-      "SET #data = list_append(if_not_exists(#data, :empty_list), :newObject), #updatedAt = :now",
+      "SET #data = list_append(if_not_exists(#data, :empty), :newObj), #updatedAt = :now",
+
     ExpressionAttributeNames: {
       "#data": "data",
+      "#shareTo": "shareTo",
       "#updatedAt": "updatedAt",
     },
+
     ExpressionAttributeValues: {
-      ":newObject": [newObject],
-      ":empty_list": [],
+      ":requester": ownerId, // owner always allowed
+      ":writeAccessObj": { userId: requesterId, access: "write" },
+      ":newObj": [newObject],
+      ":empty": [],
       ":now": new Date().toISOString(),
     },
-    ReturnValues: "NONE",
   });
 
   try {
     await docClient.send(command);
     return { success: true };
-  } catch (err) {
+  } catch (err: any) {
+    if (err.name === "ConditionalCheckFailedException") {
+      return { success: false, error: "FORBIDDEN" };
+    }
     console.log(err);
     return { success: false };
   }
