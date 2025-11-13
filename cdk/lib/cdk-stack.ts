@@ -56,14 +56,16 @@ export class WhiteboardStack extends cdk.Stack {
       broadcastLambda: lambdas.broadcastUpdates.lambdaFunction,
     });
 
-    lambdas.updateWhiteboardData.lambdaFunction.addEnvironment(
-      "BROADCAST_QUEUE_URL",
-      broadcastQueue.queueUrl,
-    );
+    const needWsSQSAccess = Object.values(lambdas).filter((l) => l.grantWsSQS);
 
-    broadcastQueue.grantSendMessages(
-      lambdas.updateWhiteboardData.lambdaFunction,
-    );
+    for (const l of needWsSQSAccess) {
+      l.lambdaFunction.addEnvironment(
+        "BROADCAST_QUEUE_URL",
+        broadcastQueue.queueUrl,
+      );
+
+      broadcastQueue.grantSendMessages(l.lambdaFunction);
+    }
 
     const needWsAccess = Object.values(lambdas).filter((l) => l.grantWsAccess);
 

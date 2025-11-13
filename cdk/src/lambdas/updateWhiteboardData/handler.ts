@@ -37,7 +37,8 @@ export const handler: Handler = async (
       .sendMessage({
         QueueUrl: process.env.BROADCAST_QUEUE_URL!,
         MessageBody: JSON.stringify({
-          userId: response.ownerId,
+          ownerId: response.ownerId,
+          whiteboardId: response.id,
           type: "WHITEBOARD_DATA_UPDATE",
           payload: {
             whiteboardId: response.id,

@@ -14,6 +14,7 @@ export interface CreateLambdaProps {
   name: string;
   stage: string;
   grantWsAccess?: boolean;
+  grantWsSQS?: boolean;
   env?: Record<string, string>;
   resources?: ResourceConfig[];
   timeoutSec?: number;
@@ -22,11 +23,13 @@ export interface CreateLambdaProps {
 export class CreateLambda extends Construct {
   public readonly lambdaFunction: NodejsFunction;
   public readonly grantWsAccess: boolean;
+  public readonly grantWsSQS: boolean;
 
   constructor(scope: Construct, props: CreateLambdaProps) {
     super(scope, props.name);
 
     this.grantWsAccess = props.grantWsAccess ?? false;
+    this.grantWsSQS = props.grantWsSQS ?? false;
 
     const { name, stage, env = {}, resources = [], timeoutSec = 3 } = props;
 

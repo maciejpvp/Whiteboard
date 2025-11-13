@@ -187,6 +187,11 @@ export const createLambdas = (stack: Stack, props: Props) => {
           envName: "connectionsDB",
           envValue: connectionsTable.tableName,
         },
+        {
+          grant: (fn) => whiteboardTable.grantReadData(fn),
+          envName: "whiteboardTable",
+          envValue: whiteboardTable.tableName,
+        },
       ],
     },
   ];
