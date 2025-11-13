@@ -15,7 +15,7 @@ export const ProjectNavbar = ({ title }: Props) => {
         onClick={() => navigate("/")}
       >
         <img src="/DrawnUp.png" alt="DrawnUp Logo" className="w-full h-[90%]" />
-        <h1 className="text-xl pb-3">{title}</h1>
+        <span className="text-xl pb-3 text-nowrap">{title}</span>
       </button>
       <UserComponent />
     </div>
