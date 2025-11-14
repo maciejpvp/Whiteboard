@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useWebSocketStore } from "./store/wsStore";
 import { websocketUrl } from "./constants/ws";
 import { queryClient } from "./lib/queryClient";
+import { SettingsPage } from "./pages/Settings";
 
 export const App = () => {
   const login = useAuthStore((store) => store.login);
@@ -45,6 +46,7 @@ export const App = () => {
     return () => {
       disconnectWS();
     };
+    //eslint-disable-next-line
   }, [idToken]);
 
   if (!idToken) return null;
@@ -55,6 +57,7 @@ export const App = () => {
         <Routes>
           <Route path="/project/:id" element={<Whiteboard />} />
           <Route path="/" element={<ProjectsList />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/callback" element={<CallbackPage />} />
           <Route path="*" element={<Navigate to={"/"} />} />

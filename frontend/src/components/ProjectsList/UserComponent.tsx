@@ -5,6 +5,8 @@ import type { MenuProps } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { stringAvatar } from "../../utils/avatarUtils";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/store/authStore";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -46,14 +48,33 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-const menuItems = [
-  { label: "Settings", icon: <SettingsIcon />, divider: true },
-  { label: "Log Out", icon: <LogoutIcon />, divider: false },
-];
+type menuItemType = {
+  label: string;
+  icon: React.ReactElement;
+  divider?: boolean;
+  to?: string;
+  onClick?: () => void;
+};
+
+const menuItems: menuItemType[] = [
+  {
+    label: "Settings",
+    icon: <SettingsIcon />,
+    divider: true,
+    to: "/settings",
+  },
+  {
+    label: "Log Out",
+    icon: <LogoutIcon />,
+    divider: false,
+    onClick: () => console.log("log out"),
+  },
+] as const;
 
 export const UserComponent = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -61,6 +82,9 @@ export const UserComponent = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const userData = useAuthStore((store) => store.user);
+  const fullName = `${userData?.name} ${userData?.surname}`;
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
@@ -72,7 +96,7 @@ export const UserComponent = () => {
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
         >
-          <Avatar {...stringAvatar("Maciek Wydra")} />
+          <Avatar {...stringAvatar(fullName)} />
         </button>
         <StyledMenu
           id="user-menu"
@@ -86,7 +110,15 @@ export const UserComponent = () => {
           }}
         >
           {menuItems.flatMap((item) => [
-            <MenuItem key={item.label} onClick={handleClose} disableRipple>
+            <MenuItem
+              key={item.label}
+              onClick={() => {
+                handleClose();
+                if (item.to) navigate(item.to);
+                item?.onClick?.();
+              }}
+              disableRipple
+            >
               {item.icon}
               {item.label}
             </MenuItem>,
