@@ -12,17 +12,6 @@ export type ShareToItem = {
   access: "read" | "write";
 };
 
-export type ItemType = {
-  Title: string;
-  WhiteboardId: string;
-  updatedAt: string; // ISO string
-  shareTo?: ShareToItem[];
-  shared?: boolean;
-  owner: string;
-};
-
-export type ListType = ItemType[];
-
 export type Point = { x: number; y: number };
 
 export type LineElement = {
@@ -89,6 +78,18 @@ export type WebSocketMessage<T extends keyof MessageMap = keyof MessageMap> = {
   type: T;
   payload: MessageMap[T];
 };
+
+export type ItemType = {
+  Title: string;
+  WhiteboardId: string;
+  updatedAt: string; // ISO string
+  data: WhiteboardData;
+  shareTo?: ShareToItem[];
+  shared?: boolean;
+  owner: string;
+};
+
+export type ListType = ItemType[];
 
 export type oldItemsType = {
   list: ItemType[];

@@ -34,12 +34,13 @@ export const getSharedWhiteboardsList = async ({ userId }: Props) => {
     RequestItems: {
       [whiteboardTable]: {
         Keys: keys,
-        ProjectionExpression: "#wid, #title, #uid, #updatedAt",
+        ProjectionExpression: "#wid, #title, #uid, #updatedAt, #data",
         ExpressionAttributeNames: {
           "#wid": "WhiteboardId",
           "#title": "Title",
           "#uid": "UserId",
           "#updatedAt": "updatedAt",
+          "#data": "data",
         },
       },
     },
@@ -61,6 +62,7 @@ export const getSharedWhiteboardsList = async ({ userId }: Props) => {
       WhiteboardId: board.WhiteboardId,
       Title: board.Title,
       updatedAt: board.updatedAt,
+      data: board?.data ?? [],
       shared: true,
       accessLevel: access?.AccessLevel,
       owner: board.UserId,

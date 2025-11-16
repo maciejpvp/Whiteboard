@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ShareWhiteboardModal } from "../Modals/ShareWhiteboardModal";
 import { DeleteWhiteboardModal } from "../Modals/DeleteWhiteboardModal";
 import { timeAgo } from "@/utils/timeAgo";
+import { WhiteboardPreview } from "./WhiteboardPreview";
 
 type Props = {
   item: ItemType;
@@ -47,10 +48,13 @@ export const ItemComponent = ({ item }: Props) => {
       cursor-pointer transition-all duration-200
       bg-white/60 backdrop-blur-md border border-slate-200 rounded-2xl p-5
       hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.99]
-      flex flex-col justify-between h-[170px]
+      flex flex-col justify-between
     "
         onClick={handleOpen}
       >
+        <div className="flex justify-center items-center mb-3 overflow-hidden">
+          <WhiteboardPreview data={item?.data ?? []} width={180} height={120} />
+        </div>
         <div className="flex justify-between items-start">
           <Typography
             variant="h6"

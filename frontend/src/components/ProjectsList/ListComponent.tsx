@@ -34,7 +34,7 @@ export const ListComponent = ({ data }: Props) => {
           "
         >
           {items.map((item) => (
-            <li key={item.WhiteboardId}>
+            <li key={item.WhiteboardId} className="">
               <ItemComponent item={item} />
             </li>
           ))}

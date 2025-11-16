@@ -96,7 +96,7 @@ export const UserComponent = () => {
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
         >
-          <Avatar {...stringAvatar(fullName)} />
+          <Avatar {...stringAvatar(fullName)} src={userData?.avatar} />
         </button>
         <StyledMenu
           id="user-menu"
